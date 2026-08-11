@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflare
+  namespace: cloudflare
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudflare
+  template:
+    metadata:
+      labels:
+        app: cloudflare
+    spec:
+      serviceAccountName: cloudflare
+      containers:
+        - name: cloudflare
+          image: cloudflare/cloudflared:latest
+          command: ["cloudflared", "tunnel", "--config", "/etc/cloudflared/config.yml", "run", "$(TUNNEL_ID)"]
+          env:
+            - name: TUNNEL_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cloudflare-credentials
+                  key: TUNNEL_ID
+          volumeMounts:
+            - name: config
+              mountPath: /etc/cloudflared
+              readOnly: true
+            - name: creds
+              mountPath: /etc/cloudflared/creds
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: cloudflare-config
+        - name: creds
+          secret:
+            secretName: cloudflare-credentials
+            items:
+              - key: credentials.json
+                path: credentials.json
