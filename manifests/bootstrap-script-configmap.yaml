@@ -48,22 +48,25 @@ data:
     ZONE_ID=$(curl -sf -X GET "https://api.cloudflare.com/client/v4/zones?name=$ZONE_NAME" \
       -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" | jq -r '.result[0].id')
 
-    EXISTING_DNS=$(curl -sf -X GET \
-      "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records?type=CNAME&name=$INGRESS_HOSTNAME" \
-      -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN")
-
-    DNS_RECORD_ID=$(echo "$EXISTING_DNS" | jq -r '.result[0].id // empty')
     TARGET="$TUNNEL_ID.cfargotunnel.com"
 
-    if [ -z "$DNS_RECORD_ID" ]; then
-      echo "Creating DNS record for $INGRESS_HOSTNAME -> $TARGET..."
-      curl -sf -X POST "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records" \
-        -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-        -H "Content-Type: application/json" \
-        -d "{\"type\": \"CNAME\", \"name\": \"$INGRESS_HOSTNAME\", \"content\": \"$TARGET\", \"proxied\": true}" \
-        > /dev/null
-    else
-      echo "DNS record for $INGRESS_HOSTNAME already exists, skipping."
-    fi
+    for INGRESS_HOSTNAME in $INGRESS_HOSTNAMES; do
+      EXISTING_DNS=$(curl -sf -X GET \
+        "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records?type=CNAME&name=$INGRESS_HOSTNAME" \
+        -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN")
+
+      DNS_RECORD_ID=$(echo "$EXISTING_DNS" | jq -r '.result[0].id // empty')
+
+      if [ -z "$DNS_RECORD_ID" ]; then
+        echo "Creating DNS record for $INGRESS_HOSTNAME -> $TARGET..."
+        curl -sf -X POST "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records" \
+          -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d "{\"type\": \"CNAME\", \"name\": \"$INGRESS_HOSTNAME\", \"content\": \"$TARGET\", \"proxied\": true}" \
+          > /dev/null
+      else
+        echo "DNS record for $INGRESS_HOSTNAME already exists, skipping."
+      fi
+    done
 
     echo "Bootstrap complete."

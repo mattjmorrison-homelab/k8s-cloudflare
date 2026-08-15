@@ -29,8 +29,8 @@ spec:
               value: "homelab"
             - name: ZONE_NAME
               value: "morrisons.site"
-            - name: INGRESS_HOSTNAME
-              value: "woodpecker.morrisons.site"
+            - name: INGRESS_HOSTNAMES
+              value: "woodpecker.morrisons.site argocd.morrisons.site"
             - name: CLOUDFLARE_API_TOKEN
               valueFrom:
                 secretKeyRef:
