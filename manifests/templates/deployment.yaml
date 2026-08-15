@@ -18,7 +18,7 @@ spec:
       serviceAccountName: cloudflare
       containers:
         - name: cloudflare
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
           command: ["cloudflared", "tunnel", "--config", "/etc/cloudflared/config.yml", "run", "$(TUNNEL_ID)"]
           env:
             - name: TUNNEL_ID
