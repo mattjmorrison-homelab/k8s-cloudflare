@@ -1,0 +1,5 @@
+apiVersion: v2
+name: homelab-cloudflare
+description: Cloudflare Tunnel for public ingress to woodpecker and argocd
+version: 0.1.0
+appVersion: "latest"

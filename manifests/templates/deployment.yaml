@@ -12,11 +12,13 @@ spec:
     metadata:
       labels:
         app: cloudflare
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-ingress.yaml") . | sha256sum }}
     spec:
       serviceAccountName: cloudflare
       containers:
         - name: cloudflare
-          image: cloudflare/cloudflared:latest
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           command: ["cloudflared", "tunnel", "--config", "/etc/cloudflared/config.yml", "run", "$(TUNNEL_ID)"]
           env:
             - name: TUNNEL_ID
