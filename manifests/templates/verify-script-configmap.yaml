@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflare-verify-script
+  namespace: cloudflare
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+data:
+{{- (.Files.Glob "scripts/*").AsConfig | nindent 2 }}
