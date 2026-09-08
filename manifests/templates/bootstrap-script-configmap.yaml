@@ -35,10 +35,24 @@ data:
       TUNNEL_ID=$(echo "$CREATE" | jq -r .result.id)
 
       curl -sf -X POST \
-        "$OPENBAO_ADDR/v1/kv/data/homelab/cloudflare" \
+        "$OPENBAO_ADDR/v1/kv/data/homelab/k8s-cloudflare/account-tag" \
         -H "X-Vault-Token: $VAULT_TOKEN" \
         -H "Content-Type: application/json" \
-        -d "{\"data\": {\"ACCOUNT_TAG\": \"$CF_ACCOUNT_ID\", \"TUNNEL_ID\": \"$TUNNEL_ID\", \"TUNNEL_SECRET\": \"$TUNNEL_SECRET\"}}" \
+        -d "{\"data\": {\"value\": \"$CF_ACCOUNT_ID\"}}" \
+        > /dev/null
+
+      curl -sf -X POST \
+        "$OPENBAO_ADDR/v1/kv/data/homelab/k8s-cloudflare/tunnel-id" \
+        -H "X-Vault-Token: $VAULT_TOKEN" \
+        -H "Content-Type: application/json" \
+        -d "{\"data\": {\"value\": \"$TUNNEL_ID\"}}" \
+        > /dev/null
+
+      curl -sf -X POST \
+        "$OPENBAO_ADDR/v1/kv/data/homelab/k8s-cloudflare/tunnel-secret" \
+        -H "X-Vault-Token: $VAULT_TOKEN" \
+        -H "Content-Type: application/json" \
+        -d "{\"data\": {\"value\": \"$TUNNEL_SECRET\"}}" \
         > /dev/null
       echo "Stored new tunnel credentials in OpenBao."
     else
