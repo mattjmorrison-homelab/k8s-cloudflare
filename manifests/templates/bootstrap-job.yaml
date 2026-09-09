@@ -30,7 +30,7 @@ spec:
             - name: ZONE_NAME
               value: "morrisons.site"
             - name: INGRESS_HOSTNAMES
-              value: "woodpecker.morrisons.site argocd.morrisons.site"
+              value: "argocd.morrisons.site"
             - name: CLOUDFLARE_API_TOKEN
               valueFrom:
                 secretKeyRef:

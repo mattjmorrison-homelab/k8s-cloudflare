@@ -29,4 +29,3 @@ check_via_tunnel() {
 }
 
 check_via_tunnel "argocd.morrisons.site" "/healthz" "200"
-check_via_tunnel "woodpecker.morrisons.site" "/healthz" "204"

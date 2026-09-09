@@ -7,8 +7,6 @@ data:
   config.yml: |
     credentials-file: /etc/cloudflared/creds/credentials.json
     ingress:
-      - hostname: woodpecker.morrisons.site
-        service: http://woodpecker-server.woodpecker.svc.cluster.local:80
       - hostname: argocd.morrisons.site
         service: http://argocd-server.argocd.svc.cluster.local:80
       - service: http_status:404
